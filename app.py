@@ -13,9 +13,9 @@ import pandas
 import dash_table
 
 global G
-G = pandas.read_csv(r"C:\Users\Thor\Dropbox\dashboard\web-app\G_new.csv")
-#url = "https://raw.githubusercontent.com/dobothor/spatial-gini/master/G_new.csv"
-#G = pandas.read_csv(url)
+#G = pandas.read_csv(r"C:\Users\Thor\Dropbox\dashboard\web-app\G_new.csv")
+url = "https://raw.githubusercontent.com/dobothor/spatial-gini/master/G_new.csv"
+G = pandas.read_csv(url)
 G.iloc[0:111,1:33]=G.iloc[0:111,1:33].applymap(lambda x: round(x,3))
 #could use better way to round numbers...
 print(G.head())
