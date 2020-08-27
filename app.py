@@ -51,12 +51,12 @@ app.layout = html.Div([
     dcc.Graph(id='Data Suppression',
               config={'scrollZoom':True}
               ),
-
     dash_table.DataTable(
         id='Table',
         columns=[{"name":i, "id":i} for i in G.columns],
         data=G.to_dict('records'),
         ),
+    html.H2("https://github.com/dobothor/spatial-gini"),
 ])
 
 # Additional Ideas
