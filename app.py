@@ -13,12 +13,14 @@ import pandas
 import dash_table
 
 global G
-#G = pandas.read_csv(r"C:\Users\Thor\Dropbox\dashboard\web-app\G_new.csv")
-url = "https://raw.githubusercontent.com/dobothor/spatial-gini/master/G_new.csv"
-G = pandas.read_csv(url)
+G = pandas.read_csv(r"C:\Users\Thor\Dropbox\dashboard\web-app\G_new.csv")
+#url = "https://raw.githubusercontent.com/dobothor/spatial-gini/master/G_new.csv"
+#G = pandas.read_csv(url)
 G.iloc[0:111,1:33]=G.iloc[0:111,1:33].applymap(lambda x: round(x,3))
 #could use better way to round numbers...
 print(G.head())
+
+I = pandas.read_csv(r"C:\Users\Thor\Dropbox\dashboard\web-app\issue.csv")
 
 global c
 c=1
@@ -44,6 +46,12 @@ app.layout = html.Div([
               ),
     html.H2("The spatial gini is constructed using the earnings per county " +
             "for each industry, from the BEA dataset CAINC5S"),
+    html.H2("To protect the confidentiality of regional businesses " +
+            "many of the county observations are censored as shown below"),
+    dcc.Graph(id='Data Suppression',
+              config={'scrollZoom':True}
+              ),
+
     dash_table.DataTable(
         id='Table',
         columns=[{"name":i, "id":i} for i in G.columns],
@@ -54,6 +62,7 @@ app.layout = html.Div([
 # Additional Ideas
 # -print suppression % as bar chart below
 # -color the table https://dash.plotly.com/datatable/conditional-formatting
+# -help guide to click for explanation of spatial Gini (pic of cumulative)
 ################
 
 
@@ -91,7 +100,30 @@ def update_graph(value):
             title="Spatial-Gini",
             ),
         }
-    
+#this controls the data suppression bar chart
+@app.callback(
+    dash.dependencies.Output('Data Suppression', 'figure'),
+    [dash.dependencies.Input('demo-dropdown', 'value')])
+def update_graph(value):
+    if value==None:
+        return{}
+    traces = []
+    for i in value:
+        idx = list(I['Industry']).index(i)
+        df = I.iloc[idx,]
+        traces.append(
+            go.Bar(x =[i for i in range(1969,2001)],
+                       y = list(df.iloc[1:33]),
+                       name=i
+                       )
+            )
+    return {
+        'data': traces,      #name of lines is based on trace index
+        'layout': go.Layout(
+            title="Data Suppression % of Counties",
+            ),
+        }
+        
     
 
 #################
